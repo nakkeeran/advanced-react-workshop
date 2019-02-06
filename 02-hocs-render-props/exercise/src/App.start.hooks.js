@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import createMediaListener from "./lib/createMediaListener";
 import { Galaxy, Trees, Earth } from "./lib/screens";
 
@@ -40,9 +40,8 @@ class Media extends React.Component {
 
 function App() {
   const [mediaState, setMediaState] = useState(media.getState())
-  state = {
-    queries:
-  }
+
+  useEffect(() => {})
 
   render() {
     return (
