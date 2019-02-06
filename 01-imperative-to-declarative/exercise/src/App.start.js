@@ -18,6 +18,20 @@ Tips:
 
 import React, { Component } from "react";
 
+class DocumentTitle extends Component {
+  componentDidMount () {
+    document.title = this.props.title
+  }
+
+  componentDidUpdate () {
+    document.title = this.props.title
+  }
+
+  render () {
+    return null
+  }
+}
+
 class App extends Component {
   state = {
     completed: 0,
@@ -46,8 +60,8 @@ class App extends Component {
         </form>
 
         <ul>
-          {todos.map(todo => (
-            <li>
+          {todos.map((todo, index) => (
+            <li key={index}>
               <label>
                 <input
                   type="checkbox"
@@ -67,6 +81,7 @@ class App extends Component {
             </li>
           ))}
         </ul>
+        <DocumentTitle title={`Todos (${incomplete})`} />
       </div>
     );
   }
