@@ -15,8 +15,8 @@ instance, you can access it as `this.audio` in `AudioPlayer`
 
 ```js
 // play/pause
-audio.play()
-audio.pause()
+audioRef.current.play()
+audioRef.current.pause()
 
 // change the current time
 audio.currentTime = audio.currentTime + 10
@@ -51,37 +51,62 @@ import FaPlay from "react-icons/lib/fa/play";
 import FaRepeat from "react-icons/lib/fa/repeat";
 import FaRotateLeft from "react-icons/lib/fa/rotate-left";
 
+const AudioContext = React.createContext()
+
 function AudioPlayer({ source, children }) {
   const audioRef = useRef(null);
+  const [isPlaying, setIsPlaying] = useState(false)
+
+  const context = {
+    isPlaying,
+    play: () => {
+      audioRef.current.play()
+      setIsPlaying(true)
+    },
+    pause: () => {
+      audioRef.current.pause()
+      setIsPlaying(false)
+    },
+    jumpForward: () => {
+      audioRef.current.currentTime + 10
+    },
+    jumpBackward: () => {
+      audioRef.current.currentTime - 10
+    }
+  }
 
   return (
-    <div className="audio-player">
-      <audio
-        src={source}
-        onTimeUpdate={null}
-        onLoadedData={null}
-        onEnded={null}
-        ref={audioRef}
-      />
-      {children}
-    </div>
-  );
+    <AudioContext.Provider value={context}>
+      <div className="audio-player">
+        <audio
+          src={source}
+          onTimeUpdate={null}
+          onLoadedData={null}
+          onEnded={null}
+          ref={audioRef}
+        />
+        {children}
+      </div>
+    </AudioContext.Provider>
+  )
 }
 
 function Play() {
+  const { isPlaying, play } = useContext(AudioContext)
   return (
-    <button className="icon-button" onClick={null} disabled={null} title="play">
+    <button className="icon-button" onClick={play} disabled={isPlaying} title="play">
       <FaPlay />
     </button>
   );
 }
 
 function Pause() {
+  const { isPlaying, pause } = useContext(AudioContext)
   return (
     <button
       className="icon-button"
-      onClick={null}
-      disabled={null}
+      onClick={pause}
+      disabled={!isPlaying}
       title="pause"
     >
       <FaPause />
@@ -90,14 +115,16 @@ function Pause() {
 }
 
 function PlayPause() {
-  return null;
+  const { isPlaying } = useContext(AudioContext)
+  return isPlaying ? <Pause /> : <Play />;
 }
 
 function JumpForward() {
+  const { jumpForward } = useContext(AudioContext)
   return (
     <button
       className="icon-button"
-      onClick={null}
+      onClick={jumpForward}
       disabled={null}
       title="Forward 10 Seconds"
     >
@@ -107,10 +134,11 @@ function JumpForward() {
 }
 
 function JumpBack() {
+  const { jumpBackward } = useContext(AudioContext)
   return (
     <button
       className="icon-button"
-      onClick={null}
+      onClick={jumpBackward}
       disabled={null}
       title="Back 10 Seconds"
     >
